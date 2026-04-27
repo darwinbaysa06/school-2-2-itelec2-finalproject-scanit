@@ -23,6 +23,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="history"
         options={{
+          headerShown: false,
           title: "History",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="list" color={color} />
