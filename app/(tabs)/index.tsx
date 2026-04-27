@@ -39,6 +39,10 @@ export default function App() {
   function toggleFlash() {
     setTorchEnabled((current) => !current);
   }
+  function browseFiles() {
+    // Implement file browsing logic here soon.
+    ToastAndroid.show("Feature coming soon!", ToastAndroid.SHORT);
+  }
   function handleQRScanned(data: string) {
     // Implement QR code handling logic here soon.
     ToastAndroid.show(`Scanned QR code: ${data}`, ToastAndroid.SHORT);
@@ -59,6 +63,9 @@ export default function App() {
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={toggleFlash}>
           <FontAwesome size={28} name="flash" color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={browseFiles}>
+          <FontAwesome size={28} name="folder" color="white" />
         </TouchableOpacity>
       </View>
     </View>
