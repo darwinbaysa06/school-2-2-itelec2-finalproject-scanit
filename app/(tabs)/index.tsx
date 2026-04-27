@@ -39,6 +39,10 @@ export default function App() {
   function toggleFlash() {
     setTorchEnabled((current) => !current);
   }
+  function handleQRScanned(data: string) {
+    // Implement QR code handling logic here soon.
+    ToastAndroid.show(`Scanned QR code: ${data}`, ToastAndroid.SHORT);
+  }
 
   return (
     <View style={styles.container}>
@@ -46,6 +50,9 @@ export default function App() {
         style={styles.camera}
         facing={facing}
         enableTorch={torchEnabled}
+        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+        onBarcodeScanned={(result) => handleQRScanned(result.data)}
+      />
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
           <FontAwesome size={28} name="camera" color="white" />
