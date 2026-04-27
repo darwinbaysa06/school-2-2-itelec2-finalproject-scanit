@@ -35,16 +35,23 @@ export default function App() {
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
-export default function Tab() {
+
+  function toggleFlash() {
+    setTorchEnabled((current) => !current);
+  }
 
   return (
     <View style={styles.container}>
       <CameraView
         style={styles.camera}
         facing={facing}
+        enableTorch={torchEnabled}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
           <FontAwesome size={28} name="camera" color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={toggleFlash}>
+          <FontAwesome size={28} name="flash" color="white" />
         </TouchableOpacity>
       </View>
     </View>
