@@ -1,8 +1,13 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   Button,
+  Modal,
+  Pressable,
+  Share,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -14,6 +19,8 @@ export default function App() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+  const [qrScanModalVisible, setQrScanModalVisible] = useState(false);
+  const [qrScannerData, setQrScannerData] = useState("");
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -32,6 +39,25 @@ export default function App() {
     );
   }
 
+  const onShare = async (shareContent: string) => {
+    try {
+      const result = await Share.share({
+        message: shareContent,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
+
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
@@ -45,7 +71,8 @@ export default function App() {
   }
   function handleQRScanned(data: string) {
     // Implement QR code handling logic here soon.
-    ToastAndroid.show(`Scanned QR code: ${data}`, ToastAndroid.SHORT);
+    setQrScannerData(data);
+    setQrScanModalVisible(true);
   }
 
   return (
@@ -68,6 +95,47 @@ export default function App() {
           <FontAwesome size={28} name="folder" color="white" />
         </TouchableOpacity>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={qrScanModalVisible}
+        onRequestClose={() => {
+          setQrScanModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalHeader}>QR Content:</Text>
+            <Text>{qrScannerData}</Text>
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonOpen]}
+                onPress={() => {
+                  router.push(qrScannerData);
+                  setQrScanModalVisible(false);
+                }}
+              >
+                <Text style={[styles.modalButtonText]}>Open</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonShare]}
+                onPress={() => {
+                  setQrScanModalVisible(false);
+                  onShare(qrScannerData);
+                }}
+              >
+                <Text style={[styles.modalButtonText]}>Share</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonClose]}
+                onPress={() => setQrScanModalVisible(false)}
+              >
+                <Text style={[styles.modalButtonText]}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -83,6 +151,61 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 25,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    width: "90%",
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 15,
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  modalButton: {
+    marginTop: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    alignSelf: "center",
+  },
+  modalButtonOpen: {
+    backgroundColor: "#60a917",
+  },
+  modalButtonShare: {
+    backgroundColor: "#647687",
+  },
+  modalButtonClose: {
+    backgroundColor: "#fa6800",
+  },
+  modalButtonText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "white",
   },
   buttonContainer: {
     position: "absolute",
