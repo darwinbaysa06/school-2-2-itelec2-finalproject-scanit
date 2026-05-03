@@ -47,9 +47,11 @@
           "recordAudioAndroid": true,
           "barcodeScannerEnabled": true
         }
+      ],
+      [
+      "expo-sqlite"
       ]
     ],
-    
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
