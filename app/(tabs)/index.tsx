@@ -1,6 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
   Alert,
@@ -14,8 +15,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { addHistoryEntry, createHistoryId } from "../../db/database";
 
 export default function App() {
+  const db = useSQLiteContext();
   const [facing, setFacing] = useState<CameraType>("back");
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
@@ -69,9 +72,13 @@ export default function App() {
     // Implement file browsing logic here soon.
     ToastAndroid.show("Feature coming soon!", ToastAndroid.SHORT);
   }
-  function handleQRScanned(data: string) {
-    // Implement QR code handling logic here soon.
+  async function handleQRScanned(data: string) {
     setQrScannerData(data);
+    await addHistoryEntry(db, {
+      id: createHistoryId(),
+      qrname: "QR Code",
+      qrcontent: data,
+    });
     setQrScanModalVisible(true);
   }
 
@@ -82,7 +89,15 @@ export default function App() {
         facing={facing}
         enableTorch={torchEnabled}
         barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-        onBarcodeScanned={(result) => handleQRScanned(result.data)}
+        onBarcodeScanned={(result) => {
+          if (qrScanModalVisible) {
+            return;
+          }
+
+          handleQRScanned(result.data).catch((error) => {
+            Alert.alert("Could not save scan", String(error));
+          });
+        }}
       />
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>

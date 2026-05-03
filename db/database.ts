@@ -45,6 +45,19 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   // Update database version
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
+export async function addHistoryEntry(
+  db: SQLiteDatabase,
+  entry: Pick<HistoryEntry, "id" | "qrname" | "qrcontent">,
+) {
+  await db.runAsync(
+    `
+      INSERT INTO history (id, qrname, qrcontent)
+      VALUES (?, ?, ?)
+    `,
+    [entry.id, entry.qrname, entry.qrcontent],
+  );
+}
+
 export async function getHistoryEntries(db: SQLiteDatabase) {
   return db.getAllAsync<HistoryEntry>(`
     SELECT id, qrname, qrcontent, created_at, updated_at
