@@ -16,7 +16,7 @@ export default function FeedLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Menu",
+          title: "Tutorials",
         }}
       />
       <Stack.Screen
@@ -29,13 +29,6 @@ export default function FeedLayout() {
         name="about"
         options={{
           title: "About the app",
-        }}
-      />
-      <Stack.Screen
-        name="tutorial"
-        options={{
-          title: "Tutorials",
-          headerShown: false,
         }}
       />
     </Stack>

@@ -20,6 +20,12 @@ export default function Tab() {
       </Pressable>
       <Pressable
         style={styles.button}
+        onPress={() => router.push("/(tabs)/menu/tutorial")}
+      >
+        <Text style={styles.buttonText}>Tutorials</Text>
+      </Pressable>
+      <Pressable
+        style={styles.button}
         onPress={() => router.push("https://go.dpg06.top/school-scanit-bugs")}
       >
         <Text style={styles.buttonText}>Report bugs</Text>
