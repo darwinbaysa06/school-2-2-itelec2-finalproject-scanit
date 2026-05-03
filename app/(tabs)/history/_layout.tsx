@@ -20,15 +20,9 @@ export default function FeedLayout() {
         }}
       />
       <Stack.Screen
-        name="settings"
+        name="item/[id]"
         options={{
-          title: "App Settings",
-        }}
-      />
-      <Stack.Screen
-        name="about"
-        options={{
-          title: "About the app",
+          title: "Scan Details",
         }}
       />
     </Stack>

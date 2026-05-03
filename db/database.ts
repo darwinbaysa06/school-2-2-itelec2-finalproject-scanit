@@ -65,3 +65,15 @@ export async function getHistoryEntries(db: SQLiteDatabase) {
     ORDER BY created_at DESC
   `);
 }
+
+export async function getHistoryEntryById(db: SQLiteDatabase, id: string) {
+  return db.getFirstAsync<HistoryEntry>(
+    `
+      SELECT id, qrname, qrcontent, created_at, updated_at
+      FROM history
+      WHERE id = ?
+      LIMIT 1
+    `,
+    [id],
+  );
+}
