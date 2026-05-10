@@ -11,20 +11,21 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
-import { addHistoryEntry, createHistoryId } from "../../db/database";
+
 import { onShare } from "@/app/functions/shareHandler";
+import { browseFilesHandler } from "@/app/functions/browseFilesHandler";
+import { handleQRScanned } from "@/app/functions/qrScannerDataHandler";
 export default function App() {
-  const db = useSQLiteContext();
   const [facing, setFacing] = useState<CameraType>("back");
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const [qrScanModalVisible, setQrScanModalVisible] = useState(false);
   const [qrScannerData, setQrScannerData] = useState("");
   const scanLockRef = useRef(false);
+  const db = useSQLiteContext();
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -50,29 +51,6 @@ export default function App() {
   function toggleFlash() {
     setTorchEnabled((current) => !current);
   }
-  function browseFiles() {
-    // Implement file browsing logic here soon.
-    ToastAndroid.show("Feature coming soon!", ToastAndroid.SHORT);
-  }
-  async function handleQRScanned(data: string) {
-    if (scanLockRef.current) {
-      return;
-    }
-
-    scanLockRef.current = true;
-    setQrScannerData(data);
-    try {
-      await addHistoryEntry(db, {
-        id: createHistoryId(),
-        qrname: "QR Code",
-        qrcontent: data,
-      });
-      setQrScanModalVisible(true);
-    } catch (error) {
-      scanLockRef.current = false;
-      throw error;
-    }
-  }
 
   function dismissQrScanModal() {
     scanLockRef.current = false;
@@ -92,7 +70,13 @@ export default function App() {
               return;
             }
 
-            handleQRScanned(result.data).catch((error) => {
+            handleQRScanned(
+              result.data,
+              db,
+              scanLockRef,
+              setQrScannerData,
+              setQrScanModalVisible,
+            ).catch((error) => {
               Alert.alert("Could not save scan", String(error));
             });
           }}
@@ -107,7 +91,7 @@ export default function App() {
         <TouchableOpacity style={styles.button} onPress={toggleFlash}>
           <FontAwesome size={28} name="flash" color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={browseFiles}>
+        <TouchableOpacity style={styles.button} onPress={browseFilesHandler}>
           <FontAwesome size={28} name="folder" color="white" />
         </TouchableOpacity>
       </View>
