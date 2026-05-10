@@ -11,6 +11,18 @@ export type HistoryEntry = {
 export function createHistoryId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
+
+export function updateHistoryEntry(db: SQLiteDatabase, entry: HistoryEntry) {
+  return db.runAsync(
+    `
+      UPDATE history
+      SET qrname = ?, qrcontent = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `,
+    [entry.qrname, entry.qrcontent, entry.id],
+  );
+}
+
 export function deleteHistoryEntry(db: SQLiteDatabase, id: string) {
   return db.runAsync(
     `

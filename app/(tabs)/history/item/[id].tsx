@@ -1,9 +1,10 @@
 import { useLocalSearchParams, Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import { getHistoryEntryById, type HistoryEntry } from "@/db/database";
 import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
+import { updateItemHandler } from "@/app/functions/updateItemHandler";
 import { onShare } from "@/app/functions/shareHandler";
 import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
 
@@ -26,11 +27,40 @@ export default function HistoryItemScreen() {
       {entry ? (
         <>
           <Text style={styles.label}>Name</Text>
-          <Text style={styles.value}>{entry.qrname}</Text>
+          <TextInput
+            style={styles.value}
+            value={entry.qrname}
+            onChangeText={(text) => setEntry({ ...entry, qrname: text })}
+            editable={true}
+          />
           <Text style={styles.label}>Content</Text>
-          <Text style={styles.value}>{entry.qrcontent}</Text>
+          <TextInput
+            style={styles.value}
+            value={entry.qrcontent}
+            onChangeText={(text) => setEntry({ ...entry, qrcontent: text })}
+            editable={true}
+            multiline
+          />
           <Text style={styles.label}>Saved</Text>
           <Text style={styles.value}>{entry.created_at}</Text>
+          <Text style={styles.label}>Last Updated</Text>
+          <Text style={styles.value}>{entry.updated_at}</Text>
+
+          <Pressable
+            style={[
+              styles.value,
+              {
+                marginTop: 24,
+                alignItems: "center",
+              },
+            ]}
+            onPress={() =>
+              updateItemHandler(db, entry).then(() => router.back())
+            }
+          >
+            <Text>Save Changes</Text>
+          </Pressable>
+
           <View style={styles.actionsContainer}>
             <Pressable
               style={[styles.actionButton, styles.openButton]}
