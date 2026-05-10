@@ -11,6 +11,15 @@ export type HistoryEntry = {
 export function createHistoryId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
+export function deleteHistoryEntry(db: SQLiteDatabase, id: string) {
+  return db.runAsync(
+    `
+      DELETE FROM history
+      WHERE id = ?
+    `,
+    [id],
+  );
+}
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const DATABASE_VERSION = 1;

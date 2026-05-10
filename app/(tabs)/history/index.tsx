@@ -4,13 +4,15 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { getHistoryEntries, type HistoryEntry } from "../../../db/database";
-
 import { onShare } from "@/app/functions/shareHandler";
-
+import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
+import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
 export default function HistoryScreen() {
   const db = useSQLiteContext();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   const loadEntries = useCallback(async () => {
     setIsLoading(true);
@@ -73,13 +75,26 @@ export default function HistoryScreen() {
                   <Pressable
                     style={[styles.cardActionBtn, styles.cardActionBtnDanger]}
                     onPress={() => {
-                      deleteItemHandler(item.id);
+                      setSelectedItemId(item.id);
+                      setDeleteModalVisible(true);
                     }}
                   >
                     <Text style={styles.cardActionBtnText}>Delete</Text>
                   </Pressable>
                 </View>
               </View>
+              <ConfirmDeleteModal
+                isVisible={deleteModalVisible && selectedItemId === item.id}
+                item={item}
+                onConfirm={async () => {
+                  if (selectedItemId) {
+                    await deleteItemHandler(db, item);
+                    setDeleteModalVisible(false);
+                    loadEntries();
+                  }
+                }}
+                onCancel={() => setDeleteModalVisible(false)}
+              />
             </View>
           )}
         />
