@@ -1,9 +1,10 @@
 import { useFocusEffect } from "@react-navigation/native";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { getHistoryEntries, type HistoryEntry } from "../../../db/database";
+import { onShare } from "../component/shareHandler";
 
 export default function HistoryScreen() {
   const db = useSQLiteContext();
@@ -28,7 +29,6 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Scan History</Text>
       {isLoading ? (
         <Text style={styles.status}>Loading saved scans...</Text>
       ) : entries.length === 0 ? (
@@ -39,16 +39,44 @@ export default function HistoryScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
-            <Pressable
-              style={styles.card}
-              onPress={() => router.push(`/(tabs)/history/item/${item.id}`)}
-            >
-              <Text style={styles.cardTitle}>{item.qrname}</Text>
-              <Text style={styles.cardText} numberOfLines={2}>
-                {item.qrcontent}
-              </Text>
-              <Text style={styles.cardMeta}>{item.created_at}</Text>
-            </Pressable>
+            <View style={styles.card}>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>{item.qrname}</Text>
+                <Text style={styles.cardText} numberOfLines={2}>
+                  {item.qrcontent}
+                </Text>
+                <Text style={styles.cardMeta}>
+                  Saved on {new Date(item.created_at).toLocaleString()}
+                </Text>
+                <View style={styles.cardActions}>
+                  <Pressable
+                    style={[styles.cardActionBtn, styles.cardActionBtnSuccess]}
+                    onPress={() => router.push(`${item.qrcontent}` as Href)}
+                  >
+                    <Text style={styles.cardActionBtnText}>Open</Text>
+                  </Pressable>
+                  <Pressable
+                    style={styles.cardActionBtn}
+                    onPress={() => onShare(item.qrcontent)}
+                  >
+                    <Text style={styles.cardActionBtnText}>Share</Text>
+                  </Pressable>
+                  <Pressable
+                    style={styles.cardActionBtn}
+                    onPress={() =>
+                      router.push(`/(tabs)/history/item/${item.id}` as Href)
+                    }
+                  >
+                    <Text style={styles.cardActionBtnText}>Edit</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.cardActionBtn, styles.cardActionBtnDanger]}
+                  >
+                    <Text style={styles.cardActionBtnText}>Delete</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
           )}
         />
       )}
@@ -60,7 +88,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f6f7fb",
-    padding: 16,
+    padding: 0,
+    margin: 16,
   },
   title: {
     fontSize: 28,
@@ -77,15 +106,18 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#dae8fc",
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e6e8ef",
+    borderColor: "#6C8EBF",
+  },
+  cardContent: {
+    gap: 6,
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#102033",
     marginBottom: 8,
   },
@@ -97,5 +129,27 @@ const styles = StyleSheet.create({
   cardMeta: {
     fontSize: 12,
     color: "#64748b",
+  },
+  cardActions: {
+    marginTop: 12,
+    flexDirection: "row",
+    gap: 16,
+  },
+  cardActionBtn: {
+    backgroundColor: "#6C8EBF",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  cardActionBtnText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  cardActionBtnSuccess: {
+    backgroundColor: "#0bc15a",
+  },
+  cardActionBtnDanger: {
+    backgroundColor: "#eb0d0d",
   },
 });

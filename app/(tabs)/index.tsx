@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
@@ -8,7 +8,6 @@ import {
   Button,
   Modal,
   Pressable,
-  Share,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -16,7 +15,7 @@ import {
   View,
 } from "react-native";
 import { addHistoryEntry, createHistoryId } from "../../db/database";
-
+import { onShare } from "./component/shareHandler";
 export default function App() {
   const db = useSQLiteContext();
   const [facing, setFacing] = useState<CameraType>("back");
@@ -41,25 +40,6 @@ export default function App() {
       </View>
     );
   }
-
-  const onShare = async (shareContent: string) => {
-    try {
-      const result = await Share.share({
-        message: shareContent,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error: any) {
-      Alert.alert(error.message);
-    }
-  };
 
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
@@ -126,7 +106,7 @@ export default function App() {
               <Pressable
                 style={[styles.modalButton, styles.modalButtonOpen]}
                 onPress={() => {
-                  router.push(qrScannerData);
+                  router.push(qrScannerData as Href);
                   setQrScanModalVisible(false);
                 }}
               >
