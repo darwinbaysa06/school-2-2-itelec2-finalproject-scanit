@@ -4,7 +4,8 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { getHistoryEntries, type HistoryEntry } from "../../../db/database";
-import { onShare } from "../component/shareHandler";
+
+import { onShare } from "@/app/functions/shareHandler";
 
 export default function HistoryScreen() {
   const db = useSQLiteContext();
@@ -71,6 +72,9 @@ export default function HistoryScreen() {
                   </Pressable>
                   <Pressable
                     style={[styles.cardActionBtn, styles.cardActionBtnDanger]}
+                    onPress={() => {
+                      deleteItemHandler(item.id);
+                    }}
                   >
                     <Text style={styles.cardActionBtnText}>Delete</Text>
                   </Pressable>

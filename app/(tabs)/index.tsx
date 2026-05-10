@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 import { addHistoryEntry, createHistoryId } from "../../db/database";
-import { onShare } from "./component/shareHandler";
+import { onShare } from "@/app/functions/shareHandler";
 export default function App() {
   const db = useSQLiteContext();
   const [facing, setFacing] = useState<CameraType>("back");
