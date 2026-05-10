@@ -3,6 +3,7 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useRef, useState } from "react";
+import { ScannerOverlay } from "@/app/component/ScannerOverlay";
 import {
   Alert,
   Button,
@@ -80,21 +81,25 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CameraView
-        style={styles.camera}
-        facing={facing}
-        enableTorch={torchEnabled}
-        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-        onBarcodeScanned={(result) => {
-          if (qrScanModalVisible || scanLockRef.current) {
-            return;
-          }
+      <View style={styles.cameraContainer}>
+        <CameraView
+          style={styles.camera}
+          facing={facing}
+          enableTorch={torchEnabled}
+          barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+          onBarcodeScanned={(result) => {
+            if (qrScanModalVisible || scanLockRef.current) {
+              return;
+            }
 
-          handleQRScanned(result.data).catch((error) => {
-            Alert.alert("Could not save scan", String(error));
-          });
-        }}
-      />
+            handleQRScanned(result.data).catch((error) => {
+              Alert.alert("Could not save scan", String(error));
+            });
+          }}
+        />
+        <ScannerOverlay />
+      </View>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
           <FontAwesome size={28} name="camera" color="white" />
@@ -162,6 +167,10 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  cameraContainer: {
+    flex: 1,
+    position: "relative",
   },
   modalContainer: {
     flex: 1,
