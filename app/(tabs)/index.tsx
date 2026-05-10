@@ -2,7 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -23,6 +23,7 @@ export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const [qrScanModalVisible, setQrScanModalVisible] = useState(false);
   const [qrScannerData, setQrScannerData] = useState("");
+  const scanLockRef = useRef(false);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -53,13 +54,28 @@ export default function App() {
     ToastAndroid.show("Feature coming soon!", ToastAndroid.SHORT);
   }
   async function handleQRScanned(data: string) {
+    if (scanLockRef.current) {
+      return;
+    }
+
+    scanLockRef.current = true;
     setQrScannerData(data);
-    await addHistoryEntry(db, {
-      id: createHistoryId(),
-      qrname: "QR Code",
-      qrcontent: data,
-    });
-    setQrScanModalVisible(true);
+    try {
+      await addHistoryEntry(db, {
+        id: createHistoryId(),
+        qrname: "QR Code",
+        qrcontent: data,
+      });
+      setQrScanModalVisible(true);
+    } catch (error) {
+      scanLockRef.current = false;
+      throw error;
+    }
+  }
+
+  function dismissQrScanModal() {
+    scanLockRef.current = false;
+    setQrScanModalVisible(false);
   }
 
   return (
@@ -70,7 +86,7 @@ export default function App() {
         enableTorch={torchEnabled}
         barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
         onBarcodeScanned={(result) => {
-          if (qrScanModalVisible) {
+          if (qrScanModalVisible || scanLockRef.current) {
             return;
           }
 
@@ -95,7 +111,7 @@ export default function App() {
         transparent={true}
         visible={qrScanModalVisible}
         onRequestClose={() => {
-          setQrScanModalVisible(false);
+          dismissQrScanModal();
         }}
       >
         <View style={styles.modalContainer}>
@@ -106,8 +122,8 @@ export default function App() {
               <Pressable
                 style={[styles.modalButton, styles.modalButtonOpen]}
                 onPress={() => {
+                  dismissQrScanModal();
                   router.push(qrScannerData as Href);
-                  setQrScanModalVisible(false);
                 }}
               >
                 <Text style={[styles.modalButtonText]}>Open</Text>
@@ -115,7 +131,7 @@ export default function App() {
               <Pressable
                 style={[styles.modalButton, styles.modalButtonShare]}
                 onPress={() => {
-                  setQrScanModalVisible(false);
+                  dismissQrScanModal();
                   onShare(qrScannerData);
                 }}
               >
@@ -123,7 +139,7 @@ export default function App() {
               </Pressable>
               <Pressable
                 style={[styles.modalButton, styles.modalButtonClose]}
-                onPress={() => setQrScanModalVisible(false)}
+                onPress={dismissQrScanModal}
               >
                 <Text style={[styles.modalButtonText]}>Close</Text>
               </Pressable>
