@@ -91,7 +91,17 @@ export default function App() {
         <TouchableOpacity style={styles.button} onPress={toggleFlash}>
           <FontAwesome size={28} name="flash" color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={browseFilesHandler}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            browseFilesHandler(
+              db,
+              scanLockRef,
+              setQrScannerData,
+              setQrScanModalVisible,
+            )
+          }
+        >
           <FontAwesome size={28} name="folder" color="white" />
         </TouchableOpacity>
       </View>
