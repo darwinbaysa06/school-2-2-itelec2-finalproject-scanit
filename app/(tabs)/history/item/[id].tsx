@@ -1,16 +1,17 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import {
-  getHistoryEntryById,
-  type HistoryEntry,
-} from "../../../../db/database";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import { getHistoryEntryById, type HistoryEntry } from "@/db/database";
+import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
+import { onShare } from "@/app/functions/shareHandler";
+import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
 
 export default function HistoryItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const db = useSQLiteContext();
   const [entry, setEntry] = useState<HistoryEntry | null>(null);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -30,6 +31,36 @@ export default function HistoryItemScreen() {
           <Text style={styles.value}>{entry.qrcontent}</Text>
           <Text style={styles.label}>Saved</Text>
           <Text style={styles.value}>{entry.created_at}</Text>
+          <View style={styles.actionsContainer}>
+            <Pressable
+              style={[styles.actionButton, styles.openButton]}
+              onPress={() => router.push(`${entry.qrcontent}` as Href)}
+            >
+              <Text style={styles.actionButtonText}>Open</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.actionButton, styles.shareButton]}
+              onPress={() => onShare(entry.qrcontent)}
+            >
+              <Text style={styles.actionButtonText}>Share</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={() => setDeleteModalVisible(true)}
+            >
+              <Text style={styles.actionButtonText}>Delete</Text>
+            </Pressable>
+            <ConfirmDeleteModal
+              isVisible={deleteModalVisible}
+              item={entry}
+              onConfirm={async () => {
+                await deleteItemHandler(db, entry);
+                setDeleteModalVisible(false);
+                router.back();
+              }}
+              onCancel={() => setDeleteModalVisible(false)}
+            />
+          </View>
         </>
       ) : (
         <Text style={styles.value}>No saved scan found for this ID.</Text>
@@ -67,5 +98,30 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#e6e8ef",
+  },
+  actionsContainer: {
+    flexDirection: "column",
+    gap: 12,
+    marginTop: 24,
+  },
+  actionButton: {
+    width: "100%",
+    padding: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  openButton: {
+    backgroundColor: "#0bc15a",
+  },
+  shareButton: {
+    backgroundColor: "#6C8EBF",
+  },
+  deleteButton: {
+    backgroundColor: "#eb0d0d",
   },
 });
