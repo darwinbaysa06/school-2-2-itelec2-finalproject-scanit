@@ -1,6 +1,10 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import { MutableRefObject } from "react";
-import { addHistoryEntry, createHistoryId } from "../../db/database";
+import {
+  addHistoryEntry,
+  createHistoryId,
+  getNextHistoryQrName,
+} from "../../db/database";
 
 export async function handleQRScanned(
   data: string,
@@ -16,9 +20,11 @@ export async function handleQRScanned(
   scanLockRef.current = true;
   setQrScannerData(data);
   try {
+    const qrname = await getNextHistoryQrName(db);
+
     await addHistoryEntry(db, {
       id: createHistoryId(),
-      qrname: "QR Code",
+      qrname,
       qrcontent: data,
     });
     setQrScanModalVisible(true);

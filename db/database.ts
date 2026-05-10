@@ -79,6 +79,15 @@ export async function addHistoryEntry(
   );
 }
 
+export async function getNextHistoryQrName(db: SQLiteDatabase) {
+  const result = await db.getFirstAsync<{ next_index: number }>(`
+    SELECT COALESCE(MAX(rowid), 0) + 1 AS next_index
+    FROM history
+  `);
+
+  return `QR Code ${result?.next_index ?? 1}`;
+}
+
 export async function getHistoryEntries(db: SQLiteDatabase) {
   return db.getAllAsync<HistoryEntry>(`
     SELECT id, qrname, qrcontent, created_at, updated_at
