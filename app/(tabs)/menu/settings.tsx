@@ -1,4 +1,4 @@
-import { getSetting, upsertSetting } from "@/db/database";
+import { getSetting, migrateDbIfNeeded, upsertSetting } from "@/db/database";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
@@ -64,20 +64,37 @@ export default function Tab() {
         style={[styles.optionRow, { paddingVertical: 20 }]}
         onPress={() => {
           if (!db) return;
-          // reset known settings to defaults
-          Promise.all([
-            upsertSetting(db, "doubletapexit", "true"),
-            upsertSetting(db, "autoopenqr", "false"),
-          ])
-            .then(() => {
-              setOption_doubleTapExit(true);
-              setOption_autoQROpen(false);
-              Alert.alert("Reset", "Settings reset to defaults");
-            })
-            .catch((e) => {
-              Alert.alert("Error", "Could not reset settings");
-              console.warn(e);
-            });
+          Alert.alert(
+            "Reset app",
+            "This will delete all history and settings and restore defaults. Continue?",
+            [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "Reset",
+                style: "destructive",
+                onPress: async () => {
+                  try {
+                    await db.execAsync(`
+                      DROP TABLE IF EXISTS history;
+                      DROP TABLE IF EXISTS settings;
+                      PRAGMA user_version = 0;
+                    `);
+
+                    await migrateDbIfNeeded(db);
+
+                    // update UI to defaults
+                    setOption_doubleTapExit(true);
+                    setOption_autoQROpen(false);
+
+                    Alert.alert("Reset", "App have been reset.");
+                  } catch (e) {
+                    console.warn("Reset failed", e);
+                    Alert.alert("Error", "Could not reset database");
+                  }
+                },
+              },
+            ],
+          );
         }}
       >
         <Text>Reset app</Text>
