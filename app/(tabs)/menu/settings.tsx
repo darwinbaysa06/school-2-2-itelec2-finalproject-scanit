@@ -1,11 +1,13 @@
-import { getSetting, migrateDbIfNeeded, upsertSetting } from "@/db/database";
-import { useRouter } from "expo-router";
+import {
+  loadSettings,
+  resetAppDatabase,
+  saveSettingsValue,
+} from "@/app/functions/settingsHandler";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 
 export default function Tab() {
-  const router = useRouter();
   const [option_doubleTapExit, setOption_doubleTapExit] = useState(true);
   const [option_autoQROpen, setOption_autoQROpen] = useState(false);
   const db = useSQLiteContext();
@@ -13,17 +15,12 @@ export default function Tab() {
   useEffect(() => {
     if (!db) return;
 
-    getSetting(db, "doubletapexit")
-      .then((v) => {
-        if (v !== null) setOption_doubleTapExit(v === "true");
+    loadSettings(db)
+      .then(({ doubleTapExit, autoOpenQr }) => {
+        setOption_doubleTapExit(doubleTapExit);
+        setOption_autoQROpen(autoOpenQr);
       })
-      .catch((e) => console.warn("Error loading doubletapexit", e));
-
-    getSetting(db, "autoopenqr")
-      .then((v) => {
-        if (v !== null) setOption_autoQROpen(v === "true");
-      })
-      .catch((e) => console.warn("Error loading autoopenqr", e));
+      .catch((e) => console.warn("Error loading settings", e));
   }, [db]);
 
   return (
@@ -35,12 +32,10 @@ export default function Tab() {
           onValueChange={(val) => {
             setOption_doubleTapExit(val);
             if (!db) return;
-            upsertSetting(db, "doubletapexit", val ? "true" : "false").catch(
-              (e) => {
-                Alert.alert("Error", "Could not save setting");
-                console.warn(e);
-              },
-            );
+            saveSettingsValue(db, "doubletapexit", val).catch((e) => {
+              Alert.alert("Error", "Could not save setting");
+              console.warn(e);
+            });
           }}
         />
       </View>
@@ -51,12 +46,10 @@ export default function Tab() {
           onValueChange={(val) => {
             setOption_autoQROpen(val);
             if (!db) return;
-            upsertSetting(db, "autoopenqr", val ? "true" : "false").catch(
-              (e) => {
-                Alert.alert("Error", "Could not save setting");
-                console.warn(e);
-              },
-            );
+            saveSettingsValue(db, "autoopenqr", val).catch((e) => {
+              Alert.alert("Error", "Could not save setting");
+              console.warn(e);
+            });
           }}
         />
       </View>
@@ -74,19 +67,12 @@ export default function Tab() {
                 style: "destructive",
                 onPress: async () => {
                   try {
-                    await db.execAsync(`
-                      DROP TABLE IF EXISTS history;
-                      DROP TABLE IF EXISTS settings;
-                      PRAGMA user_version = 0;
-                    `);
+                    const defaults = await resetAppDatabase(db);
 
-                    await migrateDbIfNeeded(db);
+                    setOption_doubleTapExit(defaults.doubleTapExit);
+                    setOption_autoQROpen(defaults.autoOpenQr);
 
-                    // update UI to defaults
-                    setOption_doubleTapExit(true);
-                    setOption_autoQROpen(false);
-
-                    Alert.alert("Reset", "App have been reset.");
+                    Alert.alert("Reset", "App has been reset.");
                   } catch (e) {
                     console.warn("Reset failed", e);
                     Alert.alert("Error", "Could not reset database");

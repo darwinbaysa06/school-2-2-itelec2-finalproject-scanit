@@ -41,7 +41,7 @@ export function deleteHistoryEntry(db: SQLiteDatabase, id: string) {
 }
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 2;
+  const DATABASE_VERSION = 3;
 
   const result = await db.getFirstAsync<{ user_version: number }>(
     "PRAGMA user_version",
@@ -76,13 +76,41 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
     await db.execAsync(`
             CREATE TABLE IF NOT EXISTS settings (
                 setting_key TEXT PRIMARY KEY,
-                setting_value TEXT NOT NULL DEFAULT ''
+                setting_value TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
             );
             INSERT INTO settings (setting_key, setting_value) VALUES ('doubletapexit', 'true');
             INSERT INTO settings (setting_key, setting_value) VALUES ('autoopenqr', 'false');
         `);
 
     currentDbVersion = 2;
+  }
+
+  // Backfill timestamp columns for older settings tables
+  if (currentDbVersion === 2) {
+    console.log("Migrating to version 3");
+    const settingsColumns = await db.getAllAsync<{ name: string }>(
+      "PRAGMA table_info(settings)",
+    );
+    const columnNames = new Set(settingsColumns.map((column) => column.name));
+
+    if (!columnNames.has("created_at")) {
+      await db.execAsync("ALTER TABLE settings ADD COLUMN created_at TEXT;");
+    }
+
+    if (!columnNames.has("updated_at")) {
+      await db.execAsync("ALTER TABLE settings ADD COLUMN updated_at TEXT;");
+    }
+
+    await db.execAsync(`
+            UPDATE settings
+            SET
+                created_at = COALESCE(created_at, datetime('now')),
+                updated_at = COALESCE(updated_at, datetime('now'));
+        `);
+
+    currentDbVersion = 3;
   }
 
   // Update database version
