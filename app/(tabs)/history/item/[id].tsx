@@ -1,12 +1,13 @@
-import { useLocalSearchParams, Href, router } from "expo-router";
+import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
+import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
+import { qrContentOpenHandler } from "@/app/functions/qrScannerDataHandler";
+import { onShare } from "@/app/functions/shareHandler";
+import { updateItemHandler } from "@/app/functions/updateItemHandler";
+import { getHistoryEntryById, type HistoryEntry } from "@/db/database";
+import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
-import { getHistoryEntryById, type HistoryEntry } from "@/db/database";
-import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
-import { updateItemHandler } from "@/app/functions/updateItemHandler";
-import { onShare } from "@/app/functions/shareHandler";
-import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function HistoryItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -45,7 +46,6 @@ export default function HistoryItemScreen() {
           <Text style={styles.value}>{entry.created_at}</Text>
           <Text style={styles.label}>Last Updated</Text>
           <Text style={styles.value}>{entry.updated_at}</Text>
-
           <Pressable
             style={[
               styles.value,
@@ -64,7 +64,7 @@ export default function HistoryItemScreen() {
           <View style={styles.actionsContainer}>
             <Pressable
               style={[styles.actionButton, styles.openButton]}
-              onPress={() => router.push(`${entry.qrcontent}` as Href)}
+              onPress={() => qrContentOpenHandler(entry.qrcontent)}
             >
               <Text style={styles.actionButtonText}>Open</Text>
             </Pressable>

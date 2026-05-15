@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Tab() {
   const router = useRouter();
@@ -26,7 +26,11 @@ export default function Tab() {
       </Pressable>
       <Pressable
         style={styles.button}
-        onPress={() => router.push("https://go.dpg06.top/school-scanit-bugs")}
+        onPress={() => {
+          Linking.openURL("https://go.dpg06.top/school-scanit-bugs").catch(
+            () => {},
+          );
+        }}
       >
         <Text style={styles.buttonText}>Report bugs</Text>
       </Pressable>

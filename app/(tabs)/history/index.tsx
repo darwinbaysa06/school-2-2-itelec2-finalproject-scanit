@@ -1,12 +1,13 @@
+import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
+import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
+import { qrContentOpenHandler } from "@/app/functions/qrScannerDataHandler";
+import { onShare } from "@/app/functions/shareHandler";
 import { useFocusEffect } from "@react-navigation/native";
 import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { getHistoryEntries, type HistoryEntry } from "../../../db/database";
-import { onShare } from "@/app/functions/shareHandler";
-import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
-import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
 export default function HistoryScreen() {
   const db = useSQLiteContext();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
@@ -54,7 +55,7 @@ export default function HistoryScreen() {
                 <View style={styles.cardActions}>
                   <Pressable
                     style={[styles.cardActionBtn, styles.cardActionBtnSuccess]}
-                    onPress={() => router.push(`${item.qrcontent}` as Href)}
+                    onPress={() => qrContentOpenHandler(item.qrcontent)}
                   >
                     <Text style={styles.cardActionBtnText}>Open</Text>
                   </Pressable>

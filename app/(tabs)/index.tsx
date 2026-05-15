@@ -1,7 +1,6 @@
 import { ScannerOverlay } from "@/app/component/ScannerOverlay";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useRef, useState } from "react";
 import {
@@ -16,7 +15,10 @@ import {
 } from "react-native";
 
 import { browseFilesHandler } from "@/app/functions/browseFilesHandler";
-import { handleQRScanned } from "@/app/functions/qrScannerDataHandler";
+import {
+  handleQRScanned,
+  qrContentOpenHandler,
+} from "@/app/functions/qrScannerDataHandler";
 import { onShare } from "@/app/functions/shareHandler";
 export default function App() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -122,7 +124,7 @@ export default function App() {
                 style={[styles.modalButton, styles.modalButtonOpen]}
                 onPress={() => {
                   dismissQrScanModal();
-                  router.push(qrScannerData as Href);
+                  qrContentOpenHandler(qrScannerData);
                 }}
               >
                 <Text style={[styles.modalButtonText]}>Open</Text>
