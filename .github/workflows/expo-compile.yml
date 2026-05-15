@@ -27,8 +27,10 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      - name: �🚀 Build Android (EAS Local)
+      - name: ⚙️ Build Android (EAS Local)
         id: build
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           pnpm dlx eas-cli build --platform android --local --non-interactive
           APK_PATH=$(find android/app/build/outputs/apk -name "*.apk" -type f | head -1)
@@ -46,7 +48,7 @@ jobs:
         shell: bash
 
       - name: 📤 Upload APK artifact
-        if: steps.build.outputs.apk_url != ''
+        if: steps.build.outputs.apk_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: app-apk
