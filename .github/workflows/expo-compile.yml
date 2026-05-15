@@ -21,21 +21,28 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm install
 
-      - name: 🛠 Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: � Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
 
-      - name: 🚀 Build Android (EAS)
+      - name: �🚀 Build Android (EAS Local)
         id: build
         run: |
-          pnpm dlx eas-cli build --platform android --non-interactive --wait --json > build.json
-          APK_URL=$(jq -r '.artifacts.android.url // .artifactUrl // .url' build.json)
-          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+          pnpm dlx eas-cli build --platform android --local --non-interactive
+          APK_PATH=$(find android/app/build/outputs/apk -name "*.apk" -type f | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "error=APK not found in build output"
+            exit 1
+          fi
+          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: ⬇️ Download APK
-        if: steps.build.outputs.apk_url != ''
+      - name: 📋 Copy APK
+        if: steps.build.outputs.apk_path != ''
         run: |
-          curl -L -o app.apk "${{ steps.build.outputs.apk_url }}"
+          cp "${{ steps.build.outputs.apk_path }}" app.apk
         shell: bash
 
       - name: 📤 Upload APK artifact
