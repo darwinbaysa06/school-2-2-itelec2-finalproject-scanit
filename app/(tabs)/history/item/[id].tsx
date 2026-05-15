@@ -7,7 +7,14 @@ import { getHistoryEntryById, type HistoryEntry } from "@/db/database";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function HistoryItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,7 +31,7 @@ export default function HistoryItemScreen() {
   }, [db, id]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {entry ? (
         <>
           <Text style={styles.label}>Name</Text>
@@ -95,7 +102,7 @@ export default function HistoryItemScreen() {
       ) : (
         <Text style={styles.value}>No saved scan found for this ID.</Text>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
