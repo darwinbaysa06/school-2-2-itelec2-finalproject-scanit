@@ -33,23 +33,26 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           pnpm dlx eas-cli build --platform android --local --non-interactive
-          APK_PATH=$(find android/app/build/outputs/apk -name "*.apk" -type f | head -1)
-          if [ -z "$APK_PATH" ]; then
-            echo "error=APK not found in build output"
+          BUILD_ARTIFACT=$(find . -maxdepth 1 -name "build-*.aab" -type f | head -1)
+          if [ -z "$BUILD_ARTIFACT" ]; then
+            echo "error=Build artifact not found"
             exit 1
           fi
-          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+          echo "artifact_path=$BUILD_ARTIFACT" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: 📋 Copy APK
-        if: steps.build.outputs.apk_path != ''
-        run: |
-          cp "${{ steps.build.outputs.apk_path }}" app.apk
-        shell: bash
-
-      - name: 📤 Upload APK artifact
-        if: steps.build.outputs.apk_path != ''
-        uses: actions/upload-artifact@v4
+      - name: Convert aab to apk
+        id: convert_aab
+        uses: ethanneff/bundletool-action@v1.0.0
         with:
-          name: app-apk
-          path: app.apk
+          aabFile: ${{ steps.build.outputs.artifact_path }}
+          base64Keystore: ${{ secrets.BASE64_KEY }}
+          keystorePassword: ${{ secrets.PASSWORD }}
+          keystoreAlias: ${{ secrets.ALIAS }}
+          keyPassword: ${{ secrets.PASSWORD }}
+          bundleToolVersion: "1.9.0"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: ${{ steps.convert_aab.outputs.apkPath }}
