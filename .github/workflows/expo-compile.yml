@@ -27,7 +27,7 @@ jobs:
       - name: 🚀 Build Android (EAS)
         id: build
         run: |
-          eas build --platform android --non-interactive --wait --json > build.json
+          pnpm dlx eas-cli build --platform android --non-interactive --wait --json > build.json
           APK_URL=$(jq -r '.artifacts.android.url // .artifactUrl // .url' build.json)
           echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
         shell: bash
