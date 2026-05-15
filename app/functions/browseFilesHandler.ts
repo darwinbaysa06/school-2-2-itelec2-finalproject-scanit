@@ -1,8 +1,8 @@
-import { Alert } from "react-native";
 import { scanFromURLAsync } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SQLiteDatabase } from "expo-sqlite";
 import { MutableRefObject } from "react";
+import { Alert } from "react-native";
 
 import { handleQRScanned } from "./qrScannerDataHandler";
 
@@ -42,20 +42,20 @@ export const browseFilesHandler = async (
   try {
     const qrResults = await scanFromURLAsync(result.assets[0].uri, ["qr"]);
     console.log("QR scan results from image:", qrResults);
-    if (!qrResults[0]?.data) {
+    if (!qrResults[0]?.raw) {
       Alert.alert("Not a valid QR, try again later");
       return null;
     }
 
     await handleQRScanned(
-      qrResults[0].data,
+      qrResults[0].raw,
       db,
       scanLockRef,
       setQrScannerData,
       setQrScanModalVisible,
     );
 
-    return qrResults[0].data;
+    return qrResults[0].raw;
   } catch (error) {
     console.error("Error scanning QR from image:", error);
     Alert.alert("Not a valid QR, try again later.");

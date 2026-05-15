@@ -1,9 +1,9 @@
+import { ScannerOverlay } from "@/app/component/ScannerOverlay";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useRef, useState } from "react";
-import { ScannerOverlay } from "@/app/component/ScannerOverlay";
 import {
   Alert,
   Button,
@@ -15,9 +15,9 @@ import {
   View,
 } from "react-native";
 
-import { onShare } from "@/app/functions/shareHandler";
 import { browseFilesHandler } from "@/app/functions/browseFilesHandler";
 import { handleQRScanned } from "@/app/functions/qrScannerDataHandler";
+import { onShare } from "@/app/functions/shareHandler";
 export default function App() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [torchEnabled, setTorchEnabled] = useState(false);
@@ -71,7 +71,7 @@ export default function App() {
             }
 
             handleQRScanned(
-              result.data,
+              result.raw as any,
               db,
               scanLockRef,
               setQrScannerData,
