@@ -1,0 +1,50 @@
+name: EAS Build
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v3
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: yarn
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🛠 Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: 🚀 Build Android (EAS)
+        id: build
+        run: |
+          eas build --platform android --non-interactive --wait --json > build.json
+          APK_URL=$(jq -r '.artifacts.android.url // .artifactUrl // .url' build.json)
+          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: ⬇️ Download APK
+        if: steps.build.outputs.apk_url != ''
+        run: |
+          curl -L -o app.apk "${{ steps.build.outputs.apk_url }}"
+        shell: bash
+
+      - name: 📤 Upload APK artifact
+        if: steps.build.outputs.apk_url != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-apk
+          path: app.apk
