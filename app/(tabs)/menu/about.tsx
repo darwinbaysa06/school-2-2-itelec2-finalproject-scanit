@@ -1,3 +1,4 @@
+import * as Application from "expo-application";
 import { Link } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -9,7 +10,12 @@ export default function DetailsScreen() {
         style={styles.logo}
       />
       <Text style={styles.title}>Scan It!</Text>
-      <Text style={styles.subtitle}>v.0.0.2-alpha (______)</Text>
+      <Text style={styles.subtitle}>
+        {Application.applicationId === "host.exp.exponent"
+          ? "Expo Go Development Build"
+          : `v.${Application.nativeApplicationVersion} (${Application.nativeBuildVersion})`}
+      </Text>
+
       <Text style={styles.subtitle}>
         Powered by React Native
         {"\n"}
