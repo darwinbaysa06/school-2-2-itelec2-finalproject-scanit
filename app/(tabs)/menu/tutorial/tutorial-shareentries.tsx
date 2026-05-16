@@ -6,22 +6,21 @@ export default function DetailsScreen() {
   const navigation: any = useNavigation();
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: "How to scan QR code?" });
+    navigation.setOptions({ title: "How to share scan entries?" });
   }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>How to Scan a QR Code</Text>
+      <Text style={styles.title}>How to Share Scan Entries?</Text>
       <Text style={styles.textContent}>
-        1. Open the QR code scanning feature in the app.
+        1. Open the history or scan entries section in the app.
         {"\n"}
-        2. Point your device&apos;s camera at the QR code you want to scan.
+        2. Locate the specific scan entry you wish to share.
         {"\n"}
-        3. Ensure the QR code is well-lit and fully visible within the camera
-        frame.
+        3. Tap on the share button to open the sharing options.
         {"\n"}
-        4. The app will automatically detect and scan the QR code, displaying
-        its content or performing the associated action.
+        4. Choose the desired sharing method (e.g., messaging apps, email, etc.)
+        and follow the prompts to share the scan entry with others.
       </Text>
     </View>
   );

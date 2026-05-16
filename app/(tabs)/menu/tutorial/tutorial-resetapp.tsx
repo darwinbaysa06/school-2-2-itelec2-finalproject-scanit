@@ -6,22 +6,32 @@ export default function DetailsScreen() {
   const navigation: any = useNavigation();
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: "How to scan QR code?" });
+    navigation.setOptions({ title: "How to reset the app?" });
   }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>How to Scan a QR Code</Text>
+      <Text style={styles.title}>How to Reset App?</Text>
       <Text style={styles.textContent}>
-        1. Open the QR code scanning feature in the app.
+        1. Open the app and navigate to the Menu tab.
         {"\n"}
-        2. Point your device&apos;s camera at the QR code you want to scan.
+        2. Open Settings menu and find the Reset App option.
         {"\n"}
-        3. Ensure the QR code is well-lit and fully visible within the camera
-        frame.
+        3. Tap on the Reset App option to initiate the reset process.
         {"\n"}
-        4. The app will automatically detect and scan the QR code, displaying
-        its content or performing the associated action.
+        4. Confirm the reset action when prompted to permanently clear all app
+        data and restore the app to its default settings.
+        {"\n"}
+        5. After confirming, the app will reset and entries will be cleared from
+        the history.
+        {"\n"}
+        6. You can start using the app again with a fresh slate, and all
+        previous scan entries will be removed from the history.
+      </Text>
+      <Text style={styles.subtitle}>
+        Please note that resetting the app will permanently delete all your scan
+        entries and cannot be undone. Make sure to back up any important data
+        before proceeding with the reset.
       </Text>
     </View>
   );

@@ -6,22 +6,22 @@ export default function DetailsScreen() {
   const navigation: any = useNavigation();
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: "How to scan QR code?" });
+    navigation.setOptions({ title: "How to delete scan entries?" });
   }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>How to Scan a QR Code</Text>
+      <Text style={styles.title}>How to Delete Scan Entries?</Text>
       <Text style={styles.textContent}>
-        1. Open the QR code scanning feature in the app.
+        1. Open the history or scan entries section in the app.
         {"\n"}
-        2. Point your device&apos;s camera at the QR code you want to scan.
+        2. Locate the specific scan entry you wish to delete.
         {"\n"}
-        3. Ensure the QR code is well-lit and fully visible within the camera
-        frame.
+        3. Tap on the edit entry button (or tap the delete icon if available) to
+        reveal the delete option.
         {"\n"}
-        4. The app will automatically detect and scan the QR code, displaying
-        its content or performing the associated action.
+        4. Confirm the deletion when prompted to permanently remove the scan
+        entry from your history.
       </Text>
     </View>
   );

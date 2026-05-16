@@ -6,6 +6,18 @@ const tutorialLinks = [
     label: "How to scan QR code?",
     href: "/(tabs)/menu/tutorial/tutorial-scanqr",
   },
+  {
+    label: "How to delete scan entries?",
+    href: "/(tabs)/menu/tutorial/tutorial-deleteentries",
+  },
+  {
+    label: "How to share scan entries?",
+    href: "/(tabs)/menu/tutorial/tutorial-shareentries",
+  },
+  {
+    label: "How to reset the app?",
+    href: "/(tabs)/menu/tutorial/tutorial-resetapp",
+  },
 ] as const;
 
 export default function Tab() {
