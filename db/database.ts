@@ -23,7 +23,7 @@ export function updateHistoryEntry(db: SQLiteDatabase, entry: HistoryEntry) {
   return db.runAsync(
     `
       UPDATE history
-      SET qrname = ?, qrcontent = ?, updated_at = datetime('now')
+      SET qrname = ?, qrcontent = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
       WHERE id = ?
     `,
     [entry.qrname, entry.qrcontent, entry.id],
@@ -41,7 +41,7 @@ export function deleteHistoryEntry(db: SQLiteDatabase, id: string) {
 }
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 3;
+  const DATABASE_VERSION = 4;
 
   const result = await db.getFirstAsync<{ user_version: number }>(
     "PRAGMA user_version",
@@ -62,8 +62,8 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
                 id TEXT PRIMARY KEY,
                 qrname TEXT NOT NULL DEFAULT '',
                 qrcontent TEXT NOT NULL DEFAULT '',
-                created_at TEXT NOT NULL DEFAULT (datetime('now')),
-                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+              created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+              updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
             );
         `);
 
@@ -77,8 +77,8 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
             CREATE TABLE IF NOT EXISTS settings (
                 setting_key TEXT PRIMARY KEY,
                 setting_value TEXT NOT NULL DEFAULT '',
-                created_at TEXT NOT NULL DEFAULT (datetime('now')),
-                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+              created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+              updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
             );
             INSERT INTO settings (setting_key, setting_value) VALUES ('doubletapexit', 'true');
             INSERT INTO settings (setting_key, setting_value) VALUES ('autoopenqr', 'false');
@@ -106,11 +106,45 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
     await db.execAsync(`
             UPDATE settings
             SET
-                created_at = COALESCE(created_at, datetime('now')),
-                updated_at = COALESCE(updated_at, datetime('now'));
+          created_at = COALESCE(created_at, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+          updated_at = COALESCE(updated_at, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'));
         `);
 
     currentDbVersion = 3;
+  }
+
+  // Normalize existing timestamps to explicit ISO-8601 UTC strings.
+  if (currentDbVersion === 3) {
+    console.log("Migrating to version 4");
+    await db.execAsync(`
+        UPDATE history
+        SET
+          created_at = CASE
+            WHEN created_at IS NULL OR TRIM(created_at) = '' THEN strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+            WHEN created_at LIKE '%Z' OR created_at LIKE '%+__:__' OR created_at LIKE '%-__:__' THEN REPLACE(created_at, ' ', 'T')
+            ELSE REPLACE(created_at, ' ', 'T') || 'Z'
+          END,
+          updated_at = CASE
+            WHEN updated_at IS NULL OR TRIM(updated_at) = '' THEN strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+            WHEN updated_at LIKE '%Z' OR updated_at LIKE '%+__:__' OR updated_at LIKE '%-__:__' THEN REPLACE(updated_at, ' ', 'T')
+            ELSE REPLACE(updated_at, ' ', 'T') || 'Z'
+          END;
+
+        UPDATE settings
+        SET
+          created_at = CASE
+            WHEN created_at IS NULL OR TRIM(created_at) = '' THEN strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+            WHEN created_at LIKE '%Z' OR created_at LIKE '%+__:__' OR created_at LIKE '%-__:__' THEN REPLACE(created_at, ' ', 'T')
+            ELSE REPLACE(created_at, ' ', 'T') || 'Z'
+          END,
+          updated_at = CASE
+            WHEN updated_at IS NULL OR TRIM(updated_at) = '' THEN strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+            WHEN updated_at LIKE '%Z' OR updated_at LIKE '%+__:__' OR updated_at LIKE '%-__:__' THEN REPLACE(updated_at, ' ', 'T')
+            ELSE REPLACE(updated_at, ' ', 'T') || 'Z'
+          END;
+      `);
+
+    currentDbVersion = 4;
   }
 
   // Update database version
@@ -170,7 +204,7 @@ export async function upsertSetting(
       ON CONFLICT(setting_key)
       DO UPDATE SET
         setting_value = excluded.setting_value,
-        updated_at = datetime('now')
+        updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
     `,
     [settingKey, settingValue],
   );

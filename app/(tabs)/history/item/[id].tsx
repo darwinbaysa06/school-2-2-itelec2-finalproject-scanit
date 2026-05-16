@@ -1,4 +1,5 @@
 import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
+import { formatSqliteUtcToLocal } from "@/app/functions/dateTimeFormatter";
 import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
 import { qrContentOpenHandler } from "@/app/functions/qrScannerDataHandler";
 import { onShare } from "@/app/functions/shareHandler";
@@ -8,12 +9,12 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 export default function HistoryItemScreen() {
@@ -50,9 +51,13 @@ export default function HistoryItemScreen() {
             multiline
           />
           <Text style={styles.label}>Saved</Text>
-          <Text style={styles.value}>{entry.created_at}</Text>
+          <Text style={styles.value}>
+            {formatSqliteUtcToLocal(entry.created_at)}
+          </Text>
           <Text style={styles.label}>Last Updated</Text>
-          <Text style={styles.value}>{entry.updated_at}</Text>
+          <Text style={styles.value}>
+            {formatSqliteUtcToLocal(entry.updated_at)}
+          </Text>
           <Pressable
             style={[
               styles.value,

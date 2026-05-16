@@ -1,4 +1,5 @@
 import { ConfirmDeleteModal } from "@/app/component/ConfirmDeleteModal";
+import { formatSqliteUtcToLocal } from "@/app/functions/dateTimeFormatter";
 import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
 import { qrContentOpenHandler } from "@/app/functions/qrScannerDataHandler";
 import { onShare } from "@/app/functions/shareHandler";
@@ -50,7 +51,7 @@ export default function HistoryScreen() {
                   {item.qrcontent}
                 </Text>
                 <Text style={styles.cardMeta}>
-                  Saved on {new Date(item.created_at).toLocaleString()}
+                  Saved on {formatSqliteUtcToLocal(item.created_at)}
                 </Text>
                 <View style={styles.cardActions}>
                   <Pressable
