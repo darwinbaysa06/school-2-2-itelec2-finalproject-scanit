@@ -1,13 +1,6 @@
 name: Expo EAS CI/CD
 
 on:
-  push:
-    branches: [main, master]
-    paths-ignore:
-      - ".github/workflows/**" # Prevent workflow from triggering itself
-      - "**.md"
-      - "LICENSE"
-      - "docs/**"
   workflow_dispatch:
     inputs:
       buildType:
