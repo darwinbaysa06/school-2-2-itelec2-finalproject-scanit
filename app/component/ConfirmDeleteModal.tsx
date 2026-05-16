@@ -1,7 +1,7 @@
 // components/ConfirmDeleteModal.tsx
-import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { type HistoryEntry } from "@/db/database";
+import React from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
   isVisible: boolean;
@@ -72,5 +72,5 @@ const styles = StyleSheet.create({
   },
   cancelText: { color: "white", fontSize: 16 },
   deleteButton: { backgroundColor: "#E51400", borderRadius: 6 },
-  deleteText: { color: "white", fontWeight: "640" },
+  deleteText: { color: "white", fontWeight: "700" },
 });
