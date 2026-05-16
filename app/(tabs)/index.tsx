@@ -97,6 +97,10 @@ export default function App() {
 
       return () => {
         if (cleanup) cleanup();
+        exitTapCountRef.current = 0; // Reset counter when leaving this screen
+        if (exitTapTimerRef.current) {
+          clearTimeout(exitTapTimerRef.current);
+        }
       };
     }, [permission?.granted, db]),
   );
