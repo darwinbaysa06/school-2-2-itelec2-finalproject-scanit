@@ -1,15 +1,19 @@
 import { ScannerOverlay } from "@/app/component/ScannerOverlay";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useFocusEffect } from "@react-navigation/native";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useSQLiteContext } from "expo-sqlite";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Alert,
+  BackHandler,
   Button,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -19,6 +23,7 @@ import {
   handleQRScanned,
   qrContentOpenHandler,
 } from "@/app/functions/qrScannerDataHandler";
+import { loadSettings } from "@/app/functions/settingsHandler";
 import { onShare } from "@/app/functions/shareHandler";
 export default function App() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -28,6 +33,73 @@ export default function App() {
   const [qrScannerData, setQrScannerData] = useState("");
   const scanLockRef = useRef(false);
   const db = useSQLiteContext();
+  const exitTapCountRef = useRef(0);
+  const exitTapTimerRef = useRef<NodeJS.Timeout | number | null>(null);
+
+  // Set up back handler for double-tap exit - only when this screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== "android" || !permission?.granted) {
+        return;
+      }
+
+      // We need to get the latest setting value
+      const setupBackHandler = async () => {
+        const settings = await loadSettings(db);
+        if (!settings.doubleTapExit) {
+          return;
+        }
+
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          () => {
+            // Increment tap count
+            exitTapCountRef.current += 1;
+
+            // Clear existing timer
+            if (exitTapTimerRef.current) {
+              clearTimeout(exitTapTimerRef.current);
+            }
+
+            if (exitTapCountRef.current === 1) {
+              // First tap - show message
+              ToastAndroid.show("Press back again to exit", ToastAndroid.SHORT);
+
+              // Set timer to reset count after 2 seconds
+              exitTapTimerRef.current = setTimeout(() => {
+                exitTapCountRef.current = 0;
+              }, 2000);
+            } else if (exitTapCountRef.current >= 2) {
+              // Second tap - exit app
+              if (exitTapTimerRef.current) {
+                clearTimeout(exitTapTimerRef.current);
+              }
+              exitTapCountRef.current = 0;
+              BackHandler.exitApp();
+            }
+
+            return true; // Prevent default back behavior
+          },
+        );
+
+        return () => {
+          backHandler.remove();
+          if (exitTapTimerRef.current) {
+            clearTimeout(exitTapTimerRef.current);
+          }
+        };
+      };
+
+      let cleanup: (() => void) | undefined;
+      setupBackHandler().then((cleanupFn) => {
+        cleanup = cleanupFn;
+      });
+
+      return () => {
+        if (cleanup) cleanup();
+      };
+    }, [permission?.granted, db]),
+  );
 
   if (!permission) {
     // Camera permissions are still loading.
