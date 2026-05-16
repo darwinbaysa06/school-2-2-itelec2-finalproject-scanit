@@ -13,6 +13,7 @@ export async function handleQRScanned(
   scanLockRef: MutableRefObject<boolean>,
   setQrScannerData: (data: string) => void,
   setQrScanModalVisible: (visible: boolean) => void,
+  autoOpenQr: boolean = false,
 ) {
   if (scanLockRef.current) {
     return;
@@ -27,7 +28,13 @@ export async function handleQRScanned(
       qrname,
       qrcontent: data,
     });
-    setQrScanModalVisible(true);
+
+    if (autoOpenQr) {
+      scanLockRef.current = false;
+      qrContentOpenHandler(data);
+    } else {
+      setQrScanModalVisible(true);
+    }
   } catch (error) {
     scanLockRef.current = false;
     throw error;

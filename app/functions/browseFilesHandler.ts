@@ -11,6 +11,7 @@ export const browseFilesHandler = async (
   scanLockRef: MutableRefObject<boolean>,
   setQrScannerData: (data: string) => void,
   setQrScanModalVisible: (visible: boolean) => void,
+  autoOpenQr: boolean = false,
 ) => {
   // No permissions request is necessary for launching the image library.
   // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
@@ -53,6 +54,7 @@ export const browseFilesHandler = async (
       scanLockRef,
       setQrScannerData,
       setQrScanModalVisible,
+      autoOpenQr,
     );
 
     return qrResults[0].raw;
