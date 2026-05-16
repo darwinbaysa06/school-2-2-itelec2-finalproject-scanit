@@ -1,6 +1,6 @@
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
-
 export default function Tab() {
   const router = useRouter();
 
@@ -10,18 +10,21 @@ export default function Tab() {
         style={styles.button}
         onPress={() => router.push("/(tabs)/menu/settings")}
       >
-        <Text style={styles.buttonText}>App Setings</Text>
+        <FontAwesome6 size={20} name="gear" color="black" />
+        <Text style={styles.buttonText}>App Settings</Text>
       </Pressable>
       <Pressable
         style={styles.button}
         onPress={() => router.push("/(tabs)/menu/about")}
       >
+        <FontAwesome6 size={20} name="circle-info" color="black" />
         <Text style={styles.buttonText}>About the app</Text>
       </Pressable>
       <Pressable
         style={styles.button}
         onPress={() => router.push("/(tabs)/menu/tutorial")}
       >
+        <FontAwesome6 size={20} name="graduation-cap" color="black" />
         <Text style={styles.buttonText}>Tutorials</Text>
       </Pressable>
       <Pressable
@@ -32,7 +35,13 @@ export default function Tab() {
           );
         }}
       >
+        <FontAwesome6 size={20} name="bug" color="black" />
         <Text style={styles.buttonText}>Report bugs</Text>
+        <FontAwesome6
+          size={16}
+          name="arrow-up-right-from-square"
+          color="black"
+        />
       </Pressable>
     </View>
   );
@@ -49,6 +58,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   button: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
     backgroundColor: "#dae8fc",
     paddingHorizontal: 16,
     paddingVertical: 15,

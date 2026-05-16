@@ -5,6 +5,7 @@ import { qrContentOpenHandler } from "@/app/functions/qrScannerDataHandler";
 import { onShare } from "@/app/functions/shareHandler";
 import { updateItemHandler } from "@/app/functions/updateItemHandler";
 import { getHistoryEntryById, type HistoryEntry } from "@/db/database";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
@@ -35,14 +36,19 @@ export default function HistoryItemScreen() {
     <ScrollView style={styles.container}>
       {entry ? (
         <>
-          <Text style={styles.label}>Name</Text>
+          <Text style={styles.label}>
+            <FontAwesome6 size={16} name="pen-to-square" /> Name
+          </Text>
           <TextInput
             style={styles.value}
             value={entry.qrname}
             onChangeText={(text) => setEntry({ ...entry, qrname: text })}
             editable={true}
           />
-          <Text style={styles.label}>Content</Text>
+
+          <Text style={styles.label}>
+            <FontAwesome6 size={16} name="file-alt" /> Content
+          </Text>
           <TextInput
             style={styles.value}
             value={entry.qrcontent}
@@ -50,11 +56,15 @@ export default function HistoryItemScreen() {
             editable={true}
             multiline
           />
-          <Text style={styles.label}>Saved</Text>
+          <Text style={styles.label}>
+            <FontAwesome6 size={16} name="clock" /> Saved
+          </Text>
           <Text style={styles.value}>
             {formatSqliteUtcToLocal(entry.created_at)}
           </Text>
-          <Text style={styles.label}>Last Updated</Text>
+          <Text style={styles.label}>
+            <FontAwesome6 size={16} name="clock" /> Last Updated
+          </Text>
           <Text style={styles.value}>
             {formatSqliteUtcToLocal(entry.updated_at)}
           </Text>
@@ -70,7 +80,9 @@ export default function HistoryItemScreen() {
               updateItemHandler(db, entry).then(() => router.back())
             }
           >
-            <Text>Save Changes</Text>
+            <Text>
+              <FontAwesome6 size={16} name="save" /> Save Changes
+            </Text>
           </Pressable>
 
           <View style={styles.actionsContainer}>
@@ -78,19 +90,26 @@ export default function HistoryItemScreen() {
               style={[styles.actionButton, styles.openButton]}
               onPress={() => qrContentOpenHandler(entry.qrcontent)}
             >
-              <Text style={styles.actionButtonText}>Open</Text>
+              <Text style={styles.actionButtonText}>
+                <FontAwesome6 size={16} name="arrow-up-right-from-square" />{" "}
+                Open
+              </Text>
             </Pressable>
             <Pressable
               style={[styles.actionButton, styles.shareButton]}
               onPress={() => onShare(entry.qrcontent)}
             >
-              <Text style={styles.actionButtonText}>Share</Text>
+              <Text style={styles.actionButtonText}>
+                <FontAwesome6 size={16} name="share-nodes" /> Share
+              </Text>
             </Pressable>
             <Pressable
               style={[styles.actionButton, styles.deleteButton]}
               onPress={() => setDeleteModalVisible(true)}
             >
-              <Text style={styles.actionButtonText}>Delete</Text>
+              <Text style={styles.actionButtonText}>
+                <FontAwesome6 size={16} name="trash" /> Delete
+              </Text>
             </Pressable>
             <ConfirmDeleteModal
               isVisible={deleteModalVisible}

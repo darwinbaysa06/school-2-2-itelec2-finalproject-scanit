@@ -3,6 +3,7 @@ import { formatSqliteUtcToLocal } from "@/app/functions/dateTimeFormatter";
 import { deleteItemHandler } from "@/app/functions/deleteItemHandler";
 import { qrContentOpenHandler } from "@/app/functions/qrScannerDataHandler";
 import { onShare } from "@/app/functions/shareHandler";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -58,12 +59,18 @@ export default function HistoryScreen() {
                     style={[styles.cardActionBtn, styles.cardActionBtnSuccess]}
                     onPress={() => qrContentOpenHandler(item.qrcontent)}
                   >
+                    <FontAwesome6
+                      size={16}
+                      name="arrow-up-right-from-square"
+                      color="#fff"
+                    />
                     <Text style={styles.cardActionBtnText}>Open</Text>
                   </Pressable>
                   <Pressable
                     style={styles.cardActionBtn}
                     onPress={() => onShare(item.qrcontent)}
                   >
+                    <FontAwesome6 size={16} name="share-nodes" color="#fff" />
                     <Text style={styles.cardActionBtnText}>Share</Text>
                   </Pressable>
                   <Pressable
@@ -72,6 +79,7 @@ export default function HistoryScreen() {
                       router.push(`/(tabs)/history/item/${item.id}` as Href)
                     }
                   >
+                    <FontAwesome6 size={16} name="pen-to-square" color="#fff" />
                     <Text style={styles.cardActionBtnText}>Edit</Text>
                   </Pressable>
                   <Pressable
@@ -81,6 +89,7 @@ export default function HistoryScreen() {
                       setDeleteModalVisible(true);
                     }}
                   >
+                    <FontAwesome6 size={16} name="trash" color="#fff" />
                     <Text style={styles.cardActionBtnText}>Delete</Text>
                   </Pressable>
                 </View>
@@ -154,13 +163,17 @@ const styles = StyleSheet.create({
   cardActions: {
     marginTop: 12,
     flexDirection: "row",
-    gap: 16,
+    gap: 6,
   },
   cardActionBtn: {
     backgroundColor: "#6C8EBF",
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     borderRadius: 8,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
   },
   cardActionBtnText: {
     color: "#fff",
