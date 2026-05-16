@@ -17,7 +17,7 @@ export default function Tab() {
         style={styles.button}
         onPress={() => router.push("/(tabs)/menu/about")}
       >
-        <FontAwesome6 size={20} name="circle-info" color="black" />
+        <FontAwesome6 size={20} name="circle-info" />
         <Text style={styles.buttonText}>About the app</Text>
       </Pressable>
       <Pressable
@@ -41,6 +41,7 @@ export default function Tab() {
           size={16}
           name="arrow-up-right-from-square"
           color="black"
+          style={{ marginLeft: "auto" }}
         />
       </Pressable>
     </View>
