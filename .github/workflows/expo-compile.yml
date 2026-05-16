@@ -74,11 +74,11 @@ jobs:
       - name: 🏗 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🏗 Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
         with:
-          node-version: "20"
-          cache: "pnpm"
+          version: 10
+          cache: true
 
       - name: 📦 Get pnpm cache directory path
         id: pnpm-cache-dir-path
