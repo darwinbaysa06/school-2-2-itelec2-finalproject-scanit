@@ -10,7 +10,10 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "format": "pnpm dlx prettier --write \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml}\"",
-    "format:check": "pnpm dlx prettier --check \"**/*.{js,jsxpnpm add -D prettier ,ts,tsx,json,md,yml,yaml}\""
+    "format:check": "pnpm dlx prettier --check \"**/*.{js,jsxpnpm add -D prettier ,ts,tsx,json,md,yml,yaml}\"",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
