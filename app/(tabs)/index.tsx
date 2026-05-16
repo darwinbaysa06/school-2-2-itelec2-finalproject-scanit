@@ -5,23 +5,23 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useRef, useState } from "react";
 import {
-    Alert,
-    BackHandler,
-    Button,
-    Modal,
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    ToastAndroid,
-    TouchableOpacity,
-    View,
+  Alert,
+  BackHandler,
+  Button,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { browseFilesHandler } from "@/app/functions/browseFilesHandler";
 import {
-    handleQRScanned,
-    qrContentOpenHandler,
+  handleQRScanned,
+  qrContentOpenHandler,
 } from "@/app/functions/qrScannerDataHandler";
 import { loadSettings } from "@/app/functions/settingsHandler";
 import { onShare } from "@/app/functions/shareHandler";
