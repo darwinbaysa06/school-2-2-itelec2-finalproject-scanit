@@ -1,5 +1,5 @@
 import { ScannerOverlay } from "@/app/component/ScannerOverlay";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useFocusEffect } from "@react-navigation/native";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useSQLiteContext } from "expo-sqlite";
@@ -168,10 +168,14 @@ export default function App() {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-          <FontAwesome size={28} name="camera" color="white" />
+          <FontAwesome6 size={28} name="camera-rotate" color="white" />
+          <Text style={{ color: "white" }}>Flip Camera</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={toggleFlash}>
-          <FontAwesome size={28} name="flash" color="white" />
+          <FontAwesome6 size={28} name="bolt" color="white" />
+          <Text style={{ color: "white" }}>
+            {torchEnabled ? "Flash ON" : "Flash OFF"}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
@@ -185,7 +189,8 @@ export default function App() {
             )
           }
         >
-          <FontAwesome size={28} name="folder" color="white" />
+          <FontAwesome6 size={28} name="folder-open" color="white" />
+          <Text style={{ color: "white" }}>Browse Files</Text>
         </TouchableOpacity>
       </View>
       <Modal
