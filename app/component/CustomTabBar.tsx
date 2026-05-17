@@ -59,26 +59,18 @@ export function CustomTabBar({
               }),
             }}
           >
-            {options.tabBarIcon?.(
-              index === 0
-                ? {
-                    focused: isFocused,
-                    color: "#000",
-                    size: 30,
-                  }
-                : {
-                    focused: isFocused,
-                    color: isFocused ? "#000" : "#fff",
-                    size: 24,
-                  },
-            )}
+            {options.tabBarIcon?.({
+              focused: isFocused,
+              color: "#ffffff",
+              size: 24,
+            })}
             {
               <Text
                 style={{
                   fontSize: index === 0 ? 9 : 10,
-                  fontWeight: "600",
+                  fontWeight: isFocused ? "700" : "600",
                   marginTop: index === 0 ? 2 : 4,
-                  color: index === 0 ? "#000" : isFocused ? "#000" : "#fff",
+                  color: "#ffffff",
                 }}
               >
                 {typeof options.tabBarLabel === "string"
