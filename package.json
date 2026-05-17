@@ -13,7 +13,8 @@
     "format:check": "pnpm dlx prettier --check \"**/*.{js,jsxpnpm add -D prettier ,ts,tsx,json,md,yml,yaml}\"",
     "release:patch": "npm version patch",
     "release:minor": "npm version minor",
-    "release:major": "npm version major"
+    "release:major": "npm version major",
+    "postversion": "react-native-version"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -57,6 +58,7 @@
     "eas-cli": "^18.12.3",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "react-native-version": "^4.0.0",
     "typescript": "~5.9.2"
   },
   "private": true
