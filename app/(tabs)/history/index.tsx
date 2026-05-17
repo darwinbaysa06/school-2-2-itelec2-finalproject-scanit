@@ -9,6 +9,7 @@ import { Href, router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 import { getHistoryEntries, type HistoryEntry } from "../../../db/database";
 export default function HistoryScreen() {
   const db = useSQLiteContext();
@@ -47,13 +48,32 @@ export default function HistoryScreen() {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item.qrname}</Text>
-                <Text style={styles.cardText} numberOfLines={2}>
-                  {item.qrcontent}
-                </Text>
-                <Text style={styles.cardMeta}>
-                  Saved on {formatSqliteUtcToLocal(item.created_at)}
-                </Text>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                  }}
+                >
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.cardTitle}>{item.qrname}</Text>
+                    <Text
+                      textBreakStrategy="simple"
+                      style={[
+                        styles.cardText,
+                        { flexShrink: 1, flexWrap: "wrap" },
+                      ]}
+                      numberOfLines={2}
+                    >
+                      {item.qrcontent}
+                    </Text>
+                    <Text style={styles.cardMeta}>
+                      Saved on {formatSqliteUtcToLocal(item.created_at)}
+                    </Text>
+                  </View>
+                  <View style={styles.modalQrBox}>
+                    <QRCode value={item.qrcontent || " "} size={75} />
+                  </View>
+                </View>
                 <View style={styles.cardActions}>
                   <Pressable
                     style={[styles.cardActionBtn, styles.cardActionBtnSuccess]}
@@ -159,6 +179,13 @@ const styles = StyleSheet.create({
   cardMeta: {
     fontSize: 12,
     color: "#64748b",
+  },
+  modalQrBox: {
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "#f5f5f5",
+    alignItems: "center",
+    justifyContent: "center",
   },
   cardActions: {
     marginTop: 12,

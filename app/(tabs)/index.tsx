@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 
 import { browseFilesHandler } from "@/app/functions/browseFilesHandler";
 import {
@@ -203,8 +204,15 @@ export default function App() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalHeader}>QR Content:</Text>
-            <Text>{qrScannerData}</Text>
+            <View style={styles.modalContentRow}>
+              <View style={styles.modalTextBox}>
+                <Text style={styles.modalHeader}>QR Content:</Text>
+                <Text style={styles.modalContentText}>{qrScannerData}</Text>
+              </View>
+              <View style={styles.modalQrBox}>
+                <QRCode value={qrScannerData || " "} size={75} />
+              </View>
+            </View>
             <View style={styles.modalButtons}>
               <Pressable
                 style={[styles.modalButton, styles.modalButtonOpen]}
@@ -275,10 +283,29 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modalContentRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  modalQrBox: {
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "#f5f5f5",
+  },
+  modalTextBox: {
+    flex: 1,
+    minWidth: 0,
+  },
   modalHeader: {
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 15,
+  },
+  modalContentText: {
+    fontSize: 16,
+    lineHeight: 22,
+    color: "#222",
   },
   buttonClose: {
     backgroundColor: "#2196F3",
