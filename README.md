@@ -1,20 +1,62 @@
-# Welcome to your Expo app 👋
+<img src="https://raw.githubusercontent.com/dplayz/asset-library/refs/heads/main/school/scanIt-boxed.png" align="left"
+     alt="" width="125" height="125">
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+### Scan It
 
-## Get started
+Scan your QR Codes in a simple way
+
+An IT Elective 2 Finals Project
+
+---
+
+## About
+
+Scan It! is a React Native (Expo) app that scans QR Codes in a simple app.
+
+It is a school project made for complying with IT Elective 2 requirements (which focuses on Mobile App Development)
+
+It allows you to:
+
+- Scan QR Codes
+- See scans history
+- Check QR Code contents
+- Share QR content with others
+- Delete history entries
+- Configure settings
+
+## Dependencies
+
+- **Expo**: Core framework and modules (camera, router, sqlite, etc.)
+- **React Native**: Cross-platform UI framework
+- **React Navigation**: Navigation library
+- **QR Code**: `react-native-qrcode-svg` for QR code generation for some parts of the app
+- **Development**: TypeScript, ESLint, EAS CLI
+
+See [package.json](package.json) for a complete list of dependencies. Key packages include:
+
+## Usage
+
+### Download from Releases
+
+Go to [releases page](https://github.com/darwinbaysa06/school-2-2-itelec2-finalproject-scanit/releases/latest) to grab the latest build per version.
+
+Only Android app build were provided, as the creator lacks the ability to test with an iOS builds.
+
+### Build Project
 
 1. Install dependencies
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. Start the app
 
-   ```bash
+   ````bash
    npx expo start
-   ```
+   ```## Future plans
+   There is a plan to improve this project i
+   ````
 
 In the output, you'll find options to open the app in a
 
@@ -25,26 +67,6 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## License
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This project is licensed under [MIT License](LICENSE). Basically, do whatever you want, without holding the creator liable.
