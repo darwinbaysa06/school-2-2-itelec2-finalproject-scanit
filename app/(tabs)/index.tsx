@@ -5,7 +5,6 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useRef, useState } from "react";
 import {
-  Alert,
   BackHandler,
   Button,
   Modal,
@@ -26,6 +25,7 @@ import {
 } from "@/app/functions/qrScannerDataHandler";
 import { loadSettings } from "@/app/functions/settingsHandler";
 import { onShare } from "@/app/functions/shareHandler";
+import { showAppAlert } from "../functions/appAlert";
 export default function App() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [torchEnabled, setTorchEnabled] = useState(false);
@@ -160,7 +160,7 @@ export default function App() {
               setQrScanModalVisible,
               autoOpenQr,
             ).catch((error) => {
-              Alert.alert("Could not save scan", String(error));
+              showAppAlert("Could not save scan", String(error));
             });
           }}
         />

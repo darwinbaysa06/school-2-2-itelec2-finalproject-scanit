@@ -1,4 +1,6 @@
-import { Alert, Share } from "react-native";
+import { Share } from "react-native";
+
+import { showAppAlert } from "./appAlert";
 
 const onShare = async (shareContent: string) => {
   try {
@@ -15,7 +17,7 @@ const onShare = async (shareContent: string) => {
       // dismissed
     }
   } catch (error: any) {
-    Alert.alert(error.message);
+    showAppAlert("Share Error", error.message);
   }
 };
 export { onShare };

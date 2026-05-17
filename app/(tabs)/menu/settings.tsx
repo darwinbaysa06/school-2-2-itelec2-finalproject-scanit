@@ -5,7 +5,8 @@ import {
 } from "@/app/functions/settingsHandler";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { showAppAlert, showAppConfirm } from "../../functions/appAlert";
 
 export default function Tab() {
   const [option_doubleTapExit, setOption_doubleTapExit] = useState(true);
@@ -33,7 +34,7 @@ export default function Tab() {
             setOption_doubleTapExit(val);
             if (!db) return;
             saveSettingsValue(db, "doubletapexit", val).catch((e) => {
-              Alert.alert("Error", "Could not save setting");
+              showAppAlert("Error", "Could not save setting");
               console.warn(e);
             });
           }}
@@ -47,7 +48,7 @@ export default function Tab() {
             setOption_autoQROpen(val);
             if (!db) return;
             saveSettingsValue(db, "autoopenqr", val).catch((e) => {
-              Alert.alert("Error", "Could not save setting");
+              showAppAlert("Error", "Could not save setting");
               console.warn(e);
             });
           }}
@@ -57,30 +58,25 @@ export default function Tab() {
         style={[styles.optionRow, { paddingVertical: 20 }]}
         onPress={() => {
           if (!db) return;
-          Alert.alert(
-            "Reset app",
-            "This will delete all history and settings and restore defaults. Continue?",
-            [
-              { text: "Cancel", style: "cancel" },
-              {
-                text: "Reset",
-                style: "destructive",
-                onPress: async () => {
-                  try {
-                    const defaults = await resetAppDatabase(db);
+          showAppConfirm({
+            title: "Reset app",
+            message:
+              "This will delete all history and settings and restore defaults. Continue?",
+            confirmLabel: "Reset",
+            onConfirm: async () => {
+              try {
+                const defaults = await resetAppDatabase(db);
 
-                    setOption_doubleTapExit(defaults.doubleTapExit);
-                    setOption_autoQROpen(defaults.autoOpenQr);
+                setOption_doubleTapExit(defaults.doubleTapExit);
+                setOption_autoQROpen(defaults.autoOpenQr);
 
-                    Alert.alert("Reset", "App has been reset.");
-                  } catch (e) {
-                    console.warn("Reset failed", e);
-                    Alert.alert("Error", "Could not reset database");
-                  }
-                },
-              },
-            ],
-          );
+                showAppAlert("Reset", "App has been reset.");
+              } catch (e) {
+                console.warn("Reset failed", e);
+                showAppAlert("Error", "Could not reset database");
+              }
+            },
+          });
         }}
       >
         <Text>Reset app</Text>

@@ -1,11 +1,13 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import { MutableRefObject } from "react";
-import { Alert, Linking, Platform } from "react-native";
+import { Linking, Platform } from "react-native";
+
 import {
   addHistoryEntry,
   createHistoryId,
   getNextHistoryQrName,
 } from "../../db/database";
+import { showAppAlert } from "./appAlert";
 
 export async function handleQRScanned(
   data: string,
@@ -48,10 +50,9 @@ function openSystemLink(url: string) {
   }
 
   Linking.openURL(url).catch(() => {
-    Alert.alert(
+    showAppAlert(
       "QR Content",
       "Unable to open this QR content on your device.",
-      [{ text: "OK" }],
     );
   });
 }
@@ -65,11 +66,11 @@ export function qrContentOpenHandler(content: string) {
   ) {
     openSystemLink(content);
   } else if (content.startsWith("WIFI:")) {
-    Alert.alert("Wi-Fi QR Code", qrTextParser(content), [{ text: "OK" }]);
+    showAppAlert("Wi-Fi QR Code", qrTextParser(content));
   } else if (content.startsWith("BEGIN:VCARD")) {
-    Alert.alert("Contact QR Code", qrTextParser(content), [{ text: "OK" }]);
+    showAppAlert("Contact QR Code", qrTextParser(content));
   } else {
-    Alert.alert("QR Content", content, [{ text: "OK" }]);
+    showAppAlert("QR Content", content);
   }
 }
 

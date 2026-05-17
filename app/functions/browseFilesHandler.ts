@@ -2,8 +2,8 @@ import { scanFromURLAsync } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SQLiteDatabase } from "expo-sqlite";
 import { MutableRefObject } from "react";
-import { Alert } from "react-native";
 
+import { showAppAlert } from "./appAlert";
 import { handleQRScanned } from "./qrScannerDataHandler";
 
 export const browseFilesHandler = async (
@@ -22,7 +22,7 @@ export const browseFilesHandler = async (
     await ImagePicker.requestMediaLibraryPermissionsAsync();
 
   if (!permissionResult.granted) {
-    Alert.alert(
+    showAppAlert(
       "Permission required",
       "Permission to access the media library is required.",
     );
@@ -44,7 +44,7 @@ export const browseFilesHandler = async (
     const qrResults = await scanFromURLAsync(result.assets[0].uri, ["qr"]);
     console.log("QR scan results from image:", qrResults);
     if (!qrResults[0]?.raw) {
-      Alert.alert("Not a valid QR, try again later");
+      showAppAlert("Not a valid QR", "Try again later.");
       return null;
     }
 
@@ -60,7 +60,7 @@ export const browseFilesHandler = async (
     return qrResults[0].raw;
   } catch (error) {
     console.error("Error scanning QR from image:", error);
-    Alert.alert("Not a valid QR, try again later.");
+    showAppAlert("Not a valid QR", "Try again later.");
     return null;
   }
 };
