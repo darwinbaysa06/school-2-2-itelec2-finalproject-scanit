@@ -2,7 +2,7 @@
   "expo": {
     "name": "Scan It!",
     "slug": "scanit",
-    "version": "1.0.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "scanit",
@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "top.dpg06.app.scanit"
+      "bundleIdentifier": "top.dpg06.app.scanit",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +26,8 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "versionCode": 1
     },
     "web": {
       "output": "static",
@@ -54,7 +56,9 @@
           "barcodeScannerEnabled": true
         }
       ],
-      ["expo-sqlite"]
+      [
+        "expo-sqlite"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
